@@ -35,7 +35,7 @@ class Product(db.Model):
         db.session.delete(self)
         db.session.commit()
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         return {
             "id": self.id,
             "product_name": self.product_name,
@@ -51,3 +51,9 @@ def result(data, code: int, message: str):
     return {"data": data, "code": code, "message": message}
 
 
+def ok(message: str):
+    return {"data": None, "code": 200, "message": message}
+
+
+def error(code: int, message: str):
+    return {"data": None, "code": code, "message": message}

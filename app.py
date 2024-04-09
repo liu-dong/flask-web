@@ -3,7 +3,7 @@ import json
 
 from flask import Flask, render_template, request, jsonify
 
-from models import db, Product, result
+from models import db, Product, result, error, ok
 
 app = Flask(__name__)
 
@@ -55,7 +55,7 @@ def add_product():
         create_user_id=data.get('create_user_id', '')
     )
     product.add()
-    return jsonify({"message": "Product added successfully"}), 201
+    return jsonify(ok("Product added successfully")), 201
 
 
 # 删除商品
@@ -64,8 +64,8 @@ def delete_product(product_id):
     product = Product.query.get(product_id)
     if product:
         product.delete()
-        return jsonify({"message": "Product deleted successfully"}), 200
-    return jsonify({"message": "Product not found"}), 404
+        return jsonify(ok("Product deleted successfully")), 200
+    return jsonify(error(404, message="Product not found")), 404
 
 
 # 更新商品
@@ -86,18 +86,27 @@ def update_product(product_id):
         product.update_time = datetime.now()
         product.update_user_id = data.get('update_user_id', product.update_user_id)
         product.update()
-        return jsonify({"message": "Product updated successfully"}), 200
-    return jsonify({"message": "Product not found"}), 404
+        return jsonify(ok("Product updated successfully")), 200
+    return jsonify(error(404, message="Product not found")), 404
 
 
 # 查询商品列表
 @app.route('/products', methods=['GET'])
 def get_products():
-    products = Product.query.all()
-    products_data = []
-    for product in products:
-        json_data = json.dumps(product.to_dict())
-        products_data.append(json_data)
+    page = request.args.get('page', 1, type=int)        # 设定默认值为第1页
+    limit = request.args.get('limit', 10, type=int)  # 设定默认每页显示10项
+    # 借助SQLAlchemy的paginate方法进行分页
+    paginated_products = Product.query.paginate(page=page, per_page=limit, error_out=False)
+
+    products_data = [product.to_dict() for product in paginated_products.items]
+
+    pagination_info = {
+        'total_items': paginated_products.total,
+        'total_pages': paginated_products.pages,
+        'current_page': paginated_products.page,
+        'per_page': paginated_products.per_page,
+    }
+
     return jsonify(result(products_data, 200, "查询成功"))
 
 
