@@ -16,5 +16,8 @@ RUN pip install -i https://pypi.tuna.tsinghua.edu.cn/simple --no-cache-dir -r re
 ENV FLASK_ENV=production \
     FLASK_APP=app.py
 
+# 使得端口号可供外界访问
+EXPOSE 5000
+
 # 定义容器启动时执行的命令，这里使用flask run启动应用
 CMD ["flask", "run"]
