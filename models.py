@@ -1,6 +1,4 @@
-from flask_sqlalchemy import SQLAlchemy
-
-db = SQLAlchemy()
+from extension import db
 
 
 class Product(db.Model):
@@ -46,14 +44,3 @@ class Product(db.Model):
             "image_url": self.image_url,
         }
 
-
-def result(data, code: int, message: str):
-    return {"data": data, "code": code, "message": message}
-
-
-def ok(message: str):
-    return {"data": None, "code": 200, "message": message}
-
-
-def error(code: int, message: str):
-    return {"data": None, "code": code, "message": message}
