@@ -15,6 +15,7 @@ app.config['JSON_AS_ASCII'] = False
 db.init_app(app)
 cors.init_app(app)
 
+
 @api.route('/')
 def hello_world():  # put application's code here
     return 'Hello World!'
