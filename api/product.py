@@ -77,5 +77,5 @@ def get_products():
         'current_page': paginated_products.page,
         'per_page': paginated_products.per_page,
     }
-
-    return jsonify(result(products_data, 200, "查询成功"))
+    # 然后使用
+    return result(products_data, 200, "查询成功")
